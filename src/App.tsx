@@ -2,8 +2,17 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.scss';
 import classNames from 'classnames';
-import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { Tabs } from './components/Tabs';
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
+
+import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
+import { useEffect, useState } from 'react';
 
 const tabs = [
   { id: 'tab-1', title: 'Tab 1', content: 'Some text 1' },
@@ -15,10 +24,51 @@ const HomePage = () => <h1 className="title">Home page</h1>;
 const NotFoundPage = () => <h1 className="title">Page not found</h1>;
 
 const TabsPage = () => {
+  const { tabId } = useParams();
+
+  const initialIndex = tabs.findIndex(t => t.id === tabId);
+  const isTabValid = initialIndex !== -1;
+
+  const [selectedIndex, setSelectedIndex] = useState(
+    isTabValid ? initialIndex : 0,
+  );
+
+  useEffect(() => {
+    if (isTabValid) {
+      setSelectedIndex(initialIndex);
+    }
+  }, [initialIndex, isTabValid]);
+
+  const handleSelect = (index: number) => {
+    setSelectedIndex(index);
+  };
+
   return (
     <>
       <h1 className="title">Tabs page</h1>
-      <Tabs tabs={tabs} />
+
+      <Tabs
+        selectedIndex={isTabValid ? selectedIndex : -1}
+        onSelect={handleSelect}
+      >
+        <div className="tabs is-boxed">
+          <TabList>
+            {tabs.map(tab => (
+              <Tab key={tab.id} data-cy="Tab" selectedClassName="is-active">
+                <Link to={`/tabs/${tab.id}`}>{tab.title}</Link>
+              </Tab>
+            ))}
+          </TabList>
+        </div>
+
+        <div className="block" data-cy="TabContent">
+          {!isTabValid && 'Please select a tab'}
+
+          {tabs.map(tab => (
+            <TabPanel key={tab.id}>{tab.content}</TabPanel>
+          ))}
+        </div>
+      </Tabs>
     </>
   );
 };
