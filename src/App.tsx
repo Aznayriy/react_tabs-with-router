@@ -2,14 +2,8 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.scss';
 import classNames from 'classnames';
-import {
-  Link,
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useParams,
-} from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Tabs } from './components/Tabs';
 
 const tabs = [
   { id: 'tab-1', title: 'Tab 1', content: 'Some text 1' },
@@ -21,31 +15,10 @@ const HomePage = () => <h1 className="title">Home page</h1>;
 const NotFoundPage = () => <h1 className="title">Page not found</h1>;
 
 const TabsPage = () => {
-  const { tabId } = useParams();
-
-  const activeTab = tabs.find(tab => tab.id === tabId);
-
   return (
     <>
       <h1 className="title">Tabs page</h1>
-
-      <div className="tabs is-boxed">
-        <ul>
-          {tabs.map(tab => (
-            <li
-              key={tab.id}
-              data-cy="Tab"
-              className={classNames({ 'is-active': tabId === tab.id })}
-            >
-              <Link to={`/tabs/${tab.id}`}>{tab.title}</Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="block" data-cy="TabContent">
-        {activeTab ? activeTab.content : 'Please select a tab'}
-      </div>
+      <Tabs tabs={tabs} />
     </>
   );
 };
@@ -55,7 +28,6 @@ export const App = () => {
 
   return (
     <>
-      {/* Also requires <html class="has-navbar-fixed-top"> */}
       <nav
         className="navbar is-light is-fixed-top is-mobile has-shadow"
         data-cy="Nav"
